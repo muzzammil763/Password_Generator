@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body class="bg-gradient-to-br from-purple-900 to-blue-900 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-gray-900/50 backdrop-blur-lg p-8 rounded-2xl shadow-2xl max-w-md w-full border border-gray-700">
+        <h1 class="text-3xl font-bold mb-8 text-white text-center">Password Generator</h1>
+        
+        <div class="space-y-6">
+            <div class="relative group">
+                <input type="text" id="password" readonly 
+                    class="w-full p-4 rounded-xl bg-gray-800/50 text-white border border-gray-700 focus:ring-2 focus:ring-purple-500 focus:outline-none text-lg font-mono">
+                <button onclick="copyPassword()" 
+                    class="absolute right-2 top-1/2 -translate-y-1/2 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105">
+                    Copy
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex items-center space-x-3 bg-gray-800/30 p-3 rounded-xl">
+                    <input type="checkbox" id="uppercase" checked class="w-4 h-4 accent-purple-500">
+                    <label class="text-gray-300">Uppercase</label>
+                </div>
+                <div class="flex items-center space-x-3 bg-gray-800/30 p-3 rounded-xl">
+                    <input type="checkbox" id="lowercase" checked class="w-4 h-4 accent-purple-500">
+                    <label class="text-gray-300">Lowercase</label>
+                </div>
+                <div class="flex items-center space-x-3 bg-gray-800/30 p-3 rounded-xl">
+                    <input type="checkbox" id="numbers" checked class="w-4 h-4 accent-purple-500">
+                    <label class="text-gray-300">Numbers</label>
+                </div>
+                <div class="flex items-center space-x-3 bg-gray-800/30 p-3 rounded-xl">
+                    <input type="checkbox" id="symbols" checked class="w-4 h-4 accent-purple-500">
+                    <label class="text-gray-300">Symbols</label>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <div class="flex justify-between text-gray-300">
+                    <label>Password Length</label>
+                    <span id="lengthValue" class="text-purple-400">12</span>
+                </div>
+                <input type="range" id="length" min="8" max="32" value="12" 
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                    oninput="updateLength(this.value)">
+            </div>
+
+            <button onclick="generatePassword()" 
+                class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-xl hover:from-purple-700 hover:to-blue-700 transform transition-all duration-300 hover:scale-105 font-medium text-lg shadow-lg">
+                Generate Password
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function updateLength(value) {
+            document.getElementById('lengthValue').textContent = value;
+        }
+
+        function generatePassword() {
+            const length = document.getElementById('length').value;
+            const uppercase = document.getElementById('uppercase').checked;
+            const lowercase = document.getElementById('lowercase').checked;
+            const numbers = document.getElementById('numbers').checked;
+            const symbols = document.getElementById('symbols').checked;
+
+            let chars = '';
+            if (uppercase) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (lowercase) chars += 'abcdefghijklmnopqrstuvwxyz';
+            if (numbers) chars += '0123456789';
+            if (symbols) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+            if (!chars) {
+                alert('Please select at least one character type');
+                return;
+            }
+
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * chars.length);
+                password += chars[randomIndex];
+            }
+
+            document.getElementById('password').value = password;
+            
+            // Animation effect
+            gsap.from("#password", {
+                duration: 0.3,
+                scale: 0.95,
+                opacity: 0.5,
+                ease: "power2.out"
+            });
+        }
+
+        function copyPassword() {
+            const passwordField = document.getElementById('password');
+            passwordField.select();
+            document.execCommand('copy');
+            
+            // Animation feedback
+            gsap.to(passwordField, {
+                duration: 0.2,
+                scale: 1.02,
+                yoyo: true,
+                repeat: 1
+            });
+        }
+
+        // Generate initial password
+        generatePassword();
+    </script>
+</body>
+</html>
